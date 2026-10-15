@@ -1,0 +1,12 @@
+{
+  "name": "robo-advisor",
+  "version": "1.0.0",
+  "private": true,
+  "description": "投資人風險評估：靜態前端 + 記錄問卷結果的 Node 後端（零相依套件）",
+  "scripts": {
+    "start": "node server/server.js"
+  },
+  "engines": {
+    "node": ">=20.12"
+  }
+}

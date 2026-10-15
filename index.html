@@ -1,0 +1,202 @@
+<!doctype html>
+<html lang="zh-Hant">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>投資人風險評估</title>
+  <link rel="icon"
+    href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='22' fill='%231d2e5c'/%3E%3Crect x='22' y='52' width='14' height='26' fill='%2314b8a6'/%3E%3Crect x='43' y='36' width='14' height='42' fill='%2314b8a6'/%3E%3Crect x='64' y='22' width='14' height='56' fill='%23c97c13'/%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;700;800&family=Noto+Sans+TC:wght@400;500;700&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+
+  <header class="hero">
+    <div class="hero__spectrum" aria-hidden="true"></div>
+    <div class="hero__inner">
+      <p class="hero__stage">B1345041 王仁妤</p>
+      <h1 class="hero__title">投資人風險評估</h1>
+      <p class="hero__subtitle">用十個問題畫出風險輪廓，再用幾段對話理解你的行為與情緒</p>
+      <p class="hero__lede">先回答關於年齡、財務狀況、投資經驗與風險態度的十個簡短問題，接著用幾個開放式問題聊聊你面對市場波動時的真實反應。</p>
+    </div>
+  </header>
+
+  <main class="page">
+
+    <section id="nicknameStep" class="card wizard" aria-live="polite">
+
+      <p class="card__stage">開始之前</p>
+
+      <div class="wizard__question">
+        <h2 class="wizard__dimension">你的暱稱</h2>
+        <p class="wizard__text">請先輸入一個你想使用的暱稱，作答結果會以這個暱稱記錄下來。</p>
+      </div>
+
+      <form id="nicknameForm" novalidate>
+        <input id="nicknameInput" class="wizard__input" type="text" maxlength="20" autocomplete="off"
+          placeholder="例如：小明（最多 20 個字）" aria-label="暱稱" />
+        <p id="nicknameError" class="wizard__error hidden" role="alert"></p>
+        <div class="wizard__nav">
+          <span></span>
+          <button id="nicknameBtn" class="btn btn--primary" type="submit" disabled>開始作答</button>
+        </div>
+      </form>
+    </section>
+
+    <section id="wizard" class="card wizard hidden" aria-live="polite">
+
+      <p class="card__stage">第 1 階段／共 4 階段・傳統風險評估（選擇題）</p>
+
+      <div class="wizard__progress">
+        <div class="wizard__progress-track">
+          <div id="progressFill" class="wizard__progress-fill"></div>
+        </div>
+        <span id="progressLabel" class="wizard__progress-label">第 1 題，共 10 題</span>
+      </div>
+
+      <div class="wizard__question">
+        <h2 id="qDimension" class="wizard__dimension"></h2>
+        <p id="qText" class="wizard__text"></p>
+        <p id="qNote" class="wizard__note hidden"></p>
+      </div>
+
+      <div id="qOptions" class="wizard__options" role="radiogroup"></div>
+
+      <div class="wizard__nav">
+        <button id="backBtn" class="btn btn--ghost" type="button">上一題</button>
+        <button id="nextBtn" class="btn btn--primary" type="button" disabled>下一題</button>
+      </div>
+    </section>
+
+    <section id="wizard2" class="card wizard hidden" aria-live="polite">
+
+      <p class="card__stage">第 2 階段／共 4 階段・行為與情緒評估（開放式問題）</p>
+
+      <div class="wizard__progress">
+        <div class="wizard__progress-track">
+          <div id="progressFill2" class="wizard__progress-fill"></div>
+        </div>
+        <span id="progressLabel2" class="wizard__progress-label">第 1 題，共 6 題</span>
+      </div>
+
+      <div class="wizard__question">
+        <p id="qIndicatorHint2" class="wizard__dimension"></p>
+        <p id="qText2" class="wizard__text"></p>
+      </div>
+
+      <textarea id="qAnswer2" class="wizard__textarea" rows="5" aria-label="請輸入您的回答"></textarea>
+
+      <div id="qExamples2" class="wizard__examples"></div>
+
+      <div class="wizard__nav">
+        <button id="backBtn2" class="btn btn--ghost" type="button">上一題</button>
+        <button id="nextBtn2" class="btn btn--primary" type="button" disabled>下一題</button>
+      </div>
+    </section>
+
+    <section id="results" class="card results hidden" aria-live="polite">
+
+      <p class="card__stage">評估結果・傳統風險評估 ＋ 行為與情緒評估</p>
+      <p class="results__description">暱稱：<strong id="resultNickname"></strong>　<span id="submitStatus"></span></p>
+
+      <div class="results__block">
+        <h2 class="results__title">一、投資人類型（傳統風險評估）</h2>
+
+        <div class="results__header">
+          <div id="typeBadge" class="type-badge">
+            <div class="type-badge__text">
+              <p class="type-badge__label">投資人類型</p>
+              <p id="typeName" class="type-badge__name"></p>
+            </div>
+          </div>
+          <div class="score-readout">
+            <p id="scoreNumber" class="score-readout__number"></p>
+            <p class="score-readout__label">基準風險分數</p>
+          </div>
+        </div>
+
+        <div id="capNotice" class="cap-notice hidden">
+          <p class="cap-notice__title">投資人類型已調整：<span id="capBefore"></span> → <span id="capAfter"></span></p>
+          <ul id="capReasons" class="cap-notice__list"></ul>
+        </div>
+
+        <p id="typeDescription" class="results__description"></p>
+
+        <div class="results__chart">
+          <canvas id="radarCanvas" width="480" height="420" role="img" aria-label="十個風險構面的雷達圖"></canvas>
+        </div>
+
+        <div class="results__breakdown">
+          <h3>你的作答</h3>
+          <ul id="breakdownList" class="breakdown-list"></ul>
+        </div>
+      </div>
+
+      <hr class="results__divider">
+
+      <div class="results__block">
+        <h2 class="results__title">二、行為與情緒指標</h2>
+
+        <div class="results__header">
+          <div class="type-badge">
+            <div class="type-badge__text">
+              <p class="type-badge__label">主要情緒訊號</p>
+              <p id="dominantName2" class="type-badge__name"></p>
+            </div>
+          </div>
+        </div>
+
+        <p id="analysisSource2" class="results__description"></p>
+
+        <p id="lowSignalNote2" class="results__description hidden">您的回答較簡短，分析結果僅供參考——文字越詳細，分析越準確。</p>
+
+        <div class="results__chart">
+          <canvas id="radarCanvas2" width="480" height="420" role="img" aria-label="七個行為情緒指標的雷達圖"></canvas>
+        </div>
+
+        <div class="results__breakdown">
+          <h3>行為 / 情緒指標</h3>
+          <ul id="breakdownList2" class="breakdown-list"></ul>
+        </div>
+
+        <div class="results__breakdown">
+          <h3>行為提醒</h3>
+          <ul id="alertsList2" class="alert-list"></ul>
+          <p id="noAlertsNote2" class="results__description">目前未偵測到明顯的行為警訊。</p>
+        </div>
+      </div>
+
+      <div class="results__actions">
+        <button id="retakeBtn" class="btn btn--ghost" type="button">重新測驗</button>
+        <button id="downloadBtn" class="btn btn--secondary" type="button">下載結果（JSON）</button>
+      </div>
+
+      <p class="results__note">此結果已儲存在瀏覽器的 <code>roboAdvisorProfile.phase1</code> 與
+        <code>roboAdvisorProfile.phase2</code> 中——之後財務條件與動態風險畫像階段會一併讀取這兩份資料。</p>
+    </section>
+
+  </main>
+
+  <footer class="footer">
+    <p>從數據到更好的投資決策・作業一、二 — 傳統風險評估 ＋ 行為與情緒評估</p>
+  </footer>
+
+  <!-- Chart.js v4.4.4（MIT），放在 vendor/ 裡本機載入，離線或 CDN 被擋時一樣畫得出雷達圖 -->
+  <script src="vendor/chartjs/chart.umd.js"></script>
+  <script src="js/questions.js"></script>
+  <script src="js/questions-phase2.js"></script>
+  <script src="js/scoring.js"></script>
+  <script src="js/sentiment.js"></script>
+  <script src="js/chart.js"></script>
+  <script src="js/app-nickname.js"></script>
+  <script src="js/app.js"></script>
+  <script src="js/app-phase2.js"></script>
+</body>
+
+</html>
