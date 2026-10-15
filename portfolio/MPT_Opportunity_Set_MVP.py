@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 import scipy.optimize as solver
 
 # 1. 讀取資料並計算報酬率
-df = pd.read_csv('clean_prices.csv', index_col=0, parse_dates=True)
+df = pd.read_csv('portfolio/clean_prices.csv', index_col=0, parse_dates=True)
 
 total_stocks = len(df.columns)
 returns = df.pct_change().dropna()

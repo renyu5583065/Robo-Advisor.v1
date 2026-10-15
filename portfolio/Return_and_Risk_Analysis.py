@@ -48,16 +48,16 @@ def load_and_merge_csvs(folder_path: str) -> pd.DataFrame:
         )
 
         try:
-            df = pd.read_csv(file_path, encoding="utf-8-sig", thousands=",")
+            df = pd.read_csv(file_path, encoding="utf-16", sep="\t", thousands=",")
         except Exception:
-            df = pd.read_csv(file_path, encoding="big5", thousands=",")
+            df = pd.read_csv(file_path, encoding="big5", sep="\t", thousands=",")
 
         # 指定日期和收盤價欄位名稱
-        date_col = "日期"
-        close_col = "收市"
+        date_col = "年月日"
+        close_col = "收盤價(元)"
 
         # 整理日期與價格
-        df[date_col] = pd.to_datetime(df[date_col], errors="coerce")#無法識別，轉換成NaT
+        df[date_col] = pd.to_datetime(df[date_col], format="%Y%m%d", errors="coerce")#無法識別，轉換成NaT
         df = df.dropna(subset=[date_col]) #刪除有NaT的列
         df = df.sort_values(by=date_col) #按日期排序
         df = df.drop_duplicates(subset=[date_col], keep="last") #若有重複日期，保留最後一筆
