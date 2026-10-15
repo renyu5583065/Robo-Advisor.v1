@@ -28,6 +28,7 @@ def load_and_merge_csvs(folder_path: str) -> pd.DataFrame:
         "correlation_matrix.csv",
         "covariance_daily.csv",
         "covariance_annual.csv",
+        "allocation_by_risk_type.csv",
     }
     csv_files = [f for f in csv_files if os.path.basename(f) not in ignore_files]
 
