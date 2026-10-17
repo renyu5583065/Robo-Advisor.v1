@@ -180,6 +180,7 @@
     RoboAdvisor.phase2.reset();
 
     resultsEl.classList.add("hidden");
+    document.getElementById("portfolioPage").classList.add("hidden");
     renderQuestion(0);
     RoboAdvisor.nickname.show();
   }

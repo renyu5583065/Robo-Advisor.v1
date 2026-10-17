@@ -33,7 +33,7 @@ npm start                 # 結果頁會標示用的是 LLM 還是關鍵字分�
 ```bash
 cd portfolio && python Return_and_Risk_Analysis.py   # 1. 清理、報酬、共變異數、相關性
 cd .. && python portfolio/MPT_Opportunity_Set_MVP.py # 2. 機會集合、MVP、效率前緣（需在根目錄執行）
-python portfolio/Risk_Based_Allocation.py            # 3. 三種風險類型的最適配置
+python portfolio/Risk_Based_Allocation.py            # 3. 三種風險類型的最適配置（同時更新網頁用的 js/portfolio-data.js）
 python portfolio/Risk_Based_Allocation.py --score 55 # 　 選用：用問卷的基準風險分數（0–100）算一組
 ```
 

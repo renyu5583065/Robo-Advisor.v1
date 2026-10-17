@@ -584,3 +584,71 @@ button { font-family: inherit; }
   .breakdown-item { flex-wrap: wrap; }
   .breakdown-item__label { flex-basis: 100%; }
 }
+
+/* ---------- 建議投資組合 ---------- */
+.portfolio-stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.portfolio-stat {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 14px 10px;
+  text-align: center;
+  background: #fbfcfe;
+}
+
+.portfolio-stat__value {
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--navy);
+  margin: 0;
+}
+
+.portfolio-stat__label {
+  color: var(--muted);
+  font-size: 0.82rem;
+  margin: 4px 0 0;
+}
+
+.results__chart--small { max-width: 280px; }
+
+.holding-list {
+  list-style: none;
+  margin: 0 0 20px;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.holding {
+  display: grid;
+  grid-template-columns: 1fr auto auto;
+  column-gap: 12px;
+  row-gap: 6px;
+  align-items: center;
+}
+
+.holding__name { font-weight: 600; display: flex; align-items: center; gap: 8px; }
+.holding__dot { width: 10px; height: 10px; border-radius: 50%; flex: none; }
+.holding__class { color: var(--muted); font-size: 0.85rem; }
+.holding__weight { font-family: var(--font-display); font-weight: 700; min-width: 3.5em; text-align: right; }
+
+.holding__bar-track {
+  grid-column: 1 / -1;
+  height: 6px;
+  border-radius: 3px;
+  background: var(--border);
+  overflow: hidden;
+}
+
+.holding__bar-fill { display: block; height: 100%; border-radius: 3px; }
+
+@media (max-width: 480px) {
+  .portfolio-stats { grid-template-columns: 1fr; }
+}

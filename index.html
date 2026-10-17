@@ -51,7 +51,7 @@
 
     <section id="wizard" class="card wizard hidden" aria-live="polite">
 
-      <p class="card__stage">第 1 階段／共 4 階段・傳統風險評估（選擇題）</p>
+      <p class="card__stage">第 1 階段／共 2 階段・傳統風險評估</p>
 
       <div class="wizard__progress">
         <div class="wizard__progress-track">
@@ -76,7 +76,7 @@
 
     <section id="wizard2" class="card wizard hidden" aria-live="polite">
 
-      <p class="card__stage">第 2 階段／共 4 階段・行為與情緒評估（開放式問題）</p>
+      <p class="card__stage">第 2 階段／共 2 階段・行為與情緒評估</p>
 
       <div class="wizard__progress">
         <div class="wizard__progress-track">
@@ -173,18 +173,54 @@
       </div>
 
       <div class="results__actions">
-        <button id="retakeBtn" class="btn btn--ghost" type="button">重新測驗</button>
         <button id="downloadBtn" class="btn btn--secondary" type="button">下載結果（JSON）</button>
+        <button id="toPortfolioBtn" class="btn btn--primary" type="button">查看建議投資組合 →</button>
       </div>
 
       <p class="results__note">此結果已儲存在瀏覽器的 <code>roboAdvisorProfile.phase1</code> 與
-        <code>roboAdvisorProfile.phase2</code> 中——之後財務條件與動態風險畫像階段會一併讀取這兩份資料。</p>
+        <code>roboAdvisorProfile.phase2</code> 中——之後財務條件與動態風險畫像階段會一併讀取這兩份資料。
+      </p>
+    </section>
+
+    <section id="portfolioPage" class="card results hidden" aria-live="polite">
+
+      <p class="card__stage">建議投資組合・MPT 最適配置</p>
+
+      <div id="portfolioBlock" class="results__block">
+        <h2 class="results__title">建議投資組合（MPT 最適配置）</h2>
+
+        <p class="results__description">依你的基準風險分數 <strong id="portfolioScore"></strong>，
+          在單一標的不超過 40%、不放空的限制下，求出風險對應的最大預期報酬組合。</p>
+
+        <div class="portfolio-stats">
+          <div class="portfolio-stat"><p id="portfolioReturn" class="portfolio-stat__value"></p><p class="portfolio-stat__label">預期年化報酬</p></div>
+          <div class="portfolio-stat"><p id="portfolioRisk" class="portfolio-stat__value"></p><p class="portfolio-stat__label">年化波動（風險）</p></div>
+          <div class="portfolio-stat"><p id="portfolioSharpe" class="portfolio-stat__value"></p><p class="portfolio-stat__label">夏普值</p></div>
+        </div>
+
+        <div class="results__chart results__chart--small">
+          <canvas id="portfolioCanvas" width="320" height="320" role="img" aria-label="建議投資組合的權重圓環圖"></canvas>
+        </div>
+
+        <div class="results__breakdown">
+          <h3>目前選股與權重</h3>
+          <ul id="portfolioList" class="holding-list"></ul>
+        </div>
+
+        <p class="results__description">統計期間 <span id="portfolioPeriod"></span>。預期報酬採歷史平均，不代表未來表現；
+          此為教學用模型結果，不是個人化投資建議。</p>
+      </div>
+
+      <div class="results__actions">
+        <button id="backToResultsBtn" class="btn btn--secondary" type="button">← 回到評估結果</button>
+        <button id="retakeBtn" class="btn btn--ghost" type="button">重新測驗</button>
+      </div>
     </section>
 
   </main>
 
   <footer class="footer">
-    <p>從數據到更好的投資決策・作業一、二 — 傳統風險評估 ＋ 行為與情緒評估</p>
+    <p>理財機器人-Github : https://github.com/renyu5583065/Robo-Advisor.v1</p>
   </footer>
 
   <!-- Chart.js v4.4.4（MIT），放在 vendor/ 裡本機載入，離線或 CDN 被擋時一樣畫得出雷達圖 -->
@@ -196,6 +232,9 @@
   <script src="js/chart.js"></script>
   <script src="js/app-nickname.js"></script>
   <script src="js/app.js"></script>
+  <script src="js/portfolio-data.js"></script>
+  <script src="js/portfolio.js"></script>
+  <script src="js/app-portfolio.js"></script>
   <script src="js/app-phase2.js"></script>
 </body>
 
