@@ -26,7 +26,8 @@ const llm = require("./llm");
 const DATA_DIR = path.join(ROOT, "data");
 const DATA_FILE = path.join(DATA_DIR, "submissions.json");
 const PORT = Number(process.env.PORT) || 3000;
-const HOST = process.env.HOST || "127.0.0.1";
+// 本機預設只聽 127.0.0.1；雲端平台（如 Railway）的代理要連得進來，必須聽 0.0.0.0
+const HOST = process.env.HOST || (process.env.RAILWAY_ENVIRONMENT || process.env.PORT ? "0.0.0.0" : "127.0.0.1");
 const MAX_BODY_BYTES = 100 * 1024;
 const NICKNAME_MAX = 20;
 const ANALYZE_LIMIT = { max: 10, windowMs: 60_000 }; // 每個 IP 每分鐘最多幾次，避免額度被刷
@@ -195,6 +196,10 @@ async function handleApi(req, res, pathname) {
   }
 
   if (req.method === "GET") {
+    // 部署到公開網址後，這個清單不能被任何人讀走；只允許本機直接連線（經代理轉發的請求不算）
+    const addr = req.socket.remoteAddress || "";
+    const isLocal = ["127.0.0.1", "::1", "::ffff:127.0.0.1"].includes(addr) && !req.headers["x-forwarded-for"];
+    if (!isLocal) return sendJson(res, 403, { error: "僅供本機查看" });
     return sendJson(res, 200, readAll());
   }
 
