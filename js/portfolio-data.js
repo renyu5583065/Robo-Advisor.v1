@@ -2,7 +2,7 @@
 window.RoboAdvisor = window.RoboAdvisor || {};
 RoboAdvisor.portfolioData = {
   "maxWeight": 0.4,
-  "riskFree": 0.0,
+  "riskFree": 0.02,
   "period": [
     "2021-01-04",
     "2026-10-15"
