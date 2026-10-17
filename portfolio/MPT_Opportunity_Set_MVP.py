@@ -78,7 +78,7 @@ for target in efficient_frontier_return_range:
     efficient_frontier_risk_list.append(result.fun)
 
 # 6. 繪圖
-risk_free = 0.0
+risk_free = 0.02
 
 fig = plt.figure(figsize=(12, 7))
 ax = fig.add_subplot()

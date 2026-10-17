@@ -27,7 +27,7 @@ HERE = Path(__file__).resolve().parent
 PRICE_FILE = HERE / "clean_prices.csv"
 
 TRADING_DAYS = 252
-RISK_FREE = 0.0      # 無風險利率（與 MPT_Opportunity_Set_MVP.py 一致）
+RISK_FREE = 0.02      # 無風險利率（與 MPT_Opportunity_Set_MVP.py 一致）
 MAX_WEIGHT = 0.40    # 單一資產權重上限，避免積極型整個押在單一標的
 
 # 資產分類與名稱（只用於白話建議與圖表說明；換股後沒列在這裡的代號會直接顯示代號、歸為「其他」）

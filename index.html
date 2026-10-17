@@ -177,9 +177,6 @@
         <button id="toPortfolioBtn" class="btn btn--primary" type="button">查看建議投資組合 →</button>
       </div>
 
-      <p class="results__note">此結果已儲存在瀏覽器的 <code>roboAdvisorProfile.phase1</code> 與
-        <code>roboAdvisorProfile.phase2</code> 中——之後財務條件與動態風險畫像階段會一併讀取這兩份資料。
-      </p>
     </section>
 
     <section id="portfolioPage" class="card results hidden" aria-live="polite">
@@ -193,9 +190,18 @@
           在單一標的不超過 40%、不放空的限制下，求出風險對應的最大預期報酬組合。</p>
 
         <div class="portfolio-stats">
-          <div class="portfolio-stat"><p id="portfolioReturn" class="portfolio-stat__value"></p><p class="portfolio-stat__label">預期年化報酬</p></div>
-          <div class="portfolio-stat"><p id="portfolioRisk" class="portfolio-stat__value"></p><p class="portfolio-stat__label">年化波動（風險）</p></div>
-          <div class="portfolio-stat"><p id="portfolioSharpe" class="portfolio-stat__value"></p><p class="portfolio-stat__label">夏普值</p></div>
+          <div class="portfolio-stat">
+            <p id="portfolioReturn" class="portfolio-stat__value"></p>
+            <p class="portfolio-stat__label">預期年化報酬</p>
+          </div>
+          <div class="portfolio-stat">
+            <p id="portfolioRisk" class="portfolio-stat__value"></p>
+            <p class="portfolio-stat__label">年化波動（風險）</p>
+          </div>
+          <div class="portfolio-stat">
+            <p id="portfolioSharpe" class="portfolio-stat__value"></p>
+            <p class="portfolio-stat__label">夏普值</p>
+          </div>
         </div>
 
         <div class="results__chart results__chart--small">
