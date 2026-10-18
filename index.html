@@ -186,6 +186,10 @@
       <div id="portfolioBlock" class="results__block">
         <h2 class="results__title">建議投資組合（MPT 最適配置）</h2>
 
+        <p id="portfolioStatus" class="portfolio-status hidden" role="status"></p>
+
+        <div id="portfolioContent">
+
         <p class="results__description">依你的基準風險分數 <strong id="portfolioScore"></strong>，
           在單一標的不超過 40%、不放空的限制下，求出風險對應的最大預期報酬組合。</p>
 
@@ -215,6 +219,8 @@
 
         <p class="results__description">統計期間 <span id="portfolioPeriod"></span>。預期報酬採歷史平均，不代表未來表現；
           此為教學用模型結果，不是個人化投資建議。</p>
+
+        </div>
       </div>
 
       <div class="results__actions">
@@ -238,8 +244,6 @@
   <script src="js/chart.js"></script>
   <script src="js/app-nickname.js"></script>
   <script src="js/app.js"></script>
-  <script src="js/portfolio-data.js"></script>
-  <script src="js/portfolio.js"></script>
   <script src="js/app-portfolio.js"></script>
   <script src="js/app-phase2.js"></script>
 </body>

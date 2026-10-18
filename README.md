@@ -33,9 +33,13 @@ npm start                 # 結果頁會標示用的是 LLM 還是關鍵字分�
 ```bash
 cd portfolio && python Return_and_Risk_Analysis.py   # 1. 清理、報酬、共變異數、相關性
 cd .. && python portfolio/MPT_Opportunity_Set_MVP.py # 2. 機會集合、MVP、效率前緣（需在根目錄執行）
-python portfolio/Risk_Based_Allocation.py            # 3. 三種風險類型的最適配置（同時更新網頁用的 js/portfolio-data.js）
+python portfolio/Risk_Based_Allocation.py            # 3. 三種風險類型的最適配置
 python portfolio/Risk_Based_Allocation.py --score 55 # 　 選用：用問卷的基準風險分數（0–100）算一組
 ```
+
+網頁結果的「建議投資組合」不是事先算好的：使用者按下按鈕時，網頁把風險分數送到 `POST /api/portfolio`，
+Node 伺服器呼叫 `python portfolio/Risk_Based_Allocation.py --score <分數> --json`，由 Python 用 `scipy` 即時最佳化後回傳權重。
+因此執行網站的環境要有 Python 與 `requirements.txt` 的套件（部署用的 `Dockerfile` 已包含）。
 
 ### 分析流程
 

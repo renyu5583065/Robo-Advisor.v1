@@ -166,30 +166,31 @@ def plain_advice(name, weights, ret, risk):
     )
 
 
-# ---------- 網頁資料 ----------
+# ---------- 網頁 API（即時計算） ----------
 
-def write_web_data(path, assets, mu, cov, prices):
-    """輸出 js/portfolio-data.js：網頁依問卷分數即時最佳化時使用的統計量。"""
-    import json
-
-    data = {
+def portfolio_for_web(score):
+    """網頁呼叫：依問卷的風險分數即時最佳化，回傳可轉成 JSON 的結果（不輸出任何檔案或圖表）。"""
+    prices, mu, cov = load_inputs()
+    assets = list(mu.index)
+    w_min = min_variance(mu, cov)
+    w_max = max_return(mu)
+    w, target = allocation_for_score(score, mu, cov, (w_min, w_max))
+    ret, risk, sharpe = stats(w, mu, cov)
+    holdings = [
+        {"code": a, "name": ASSET_NAME.get(a, a), "assetClass": ASSET_CLASS.get(a, "其他"), "weight": float(x)}
+        for a, x in zip(assets, w) if x > 0
+    ]
+    holdings.sort(key=lambda h: -h["weight"])
+    return {
+        "score": score,
+        "holdings": holdings,
+        "expectedReturn": ret,
+        "volatility": risk,
+        "sharpe": sharpe,
+        "targetVolatility": target,
         "maxWeight": MAX_WEIGHT,
-        "riskFree": RISK_FREE,
         "period": [str(prices.index[0].date()), str(prices.index[-1].date())],
-        "assets": [
-            {"code": a, "name": ASSET_NAME.get(a, a), "assetClass": ASSET_CLASS.get(a, "其他")}
-            for a in assets
-        ],
-        "mu": [float(x) for x in mu.values],
-        "cov": [[float(x) for x in row] for row in cov.values],
     }
-    body = json.dumps(data, ensure_ascii=False, indent=2)
-    path.write_text(
-        "/* 由 portfolio/Risk_Based_Allocation.py 自動產生，請勿手動修改。 */\n"
-        "window.RoboAdvisor = window.RoboAdvisor || {};\n"
-        f"RoboAdvisor.portfolioData = {body};\n",
-        encoding="utf-8",
-    )
 
 
 # ---------- 圖表 ----------
@@ -259,9 +260,16 @@ def main():
     parser = argparse.ArgumentParser(description="依投資人風險類型做 MPT 最適配置")
     parser.add_argument("--score", type=float, help="另外替一個 0–100 的基準風險分數（網頁問卷結果）算出配置")
     parser.add_argument("--show", action="store_true", help="執行完開啟圖表視窗")
+    parser.add_argument("--json", action="store_true", help="只用 --score 算一組配置並以 JSON 輸出（給網頁 API 使用，不產生檔案）")
     args = parser.parse_args()
     if args.score is not None and not 0 <= args.score <= 100:
         parser.error("--score 必須介於 0 到 100")
+    if args.json:
+        if args.score is None:
+            parser.error("--json 需要搭配 --score")
+        import json
+        print(json.dumps(portfolio_for_web(args.score)))
+        return
     if not args.show:
         matplotlib.use("Agg")
 
@@ -318,8 +326,6 @@ def main():
     print("\n=== 白話建議 ===")
     print(advice)
     (HERE / "allocation_summary.txt").write_text(advice + "\n", encoding="utf-8")
-
-    write_web_data(HERE.parent / "js" / "portfolio-data.js", assets, mu, cov, prices)
 
     frontier = efficient_frontier(mu, cov, w_min, w_max)
     plot_frontier(HERE / "efficient_frontier_by_type.png", frontier, mu, cov, results, w_min, args.show)

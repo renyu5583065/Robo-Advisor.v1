@@ -3,6 +3,7 @@
  * 零相依套件的小型後端：
  *   - 提供前端靜態檔案（index.html、css/、js/、vendor/）
  *   - POST /api/analyze      第二階段的 LLM 分析（需 LLM_API_KEY，否則回 503）
+ *   - POST /api/portfolio    依風險分數呼叫 Python（scipy 最佳化）即時算出投資組合
  *   - POST /api/submissions  記錄一份問卷結果（含暱稱）
  *   - GET  /api/submissions  列出已記錄的結果（僅供本機查看）
  * 資料以 JSON 檔存在 data/submissions.json。
@@ -12,6 +13,7 @@ const http = require("node:http");
 const fs = require("node:fs");
 const path = require("node:path");
 const crypto = require("node:crypto");
+const { execFile } = require("node:child_process");
 
 const ROOT = path.resolve(__dirname, "..");
 
@@ -177,7 +179,60 @@ async function handleAnalyze(req, res) {
   }
 }
 
+// ---- 投資組合：呼叫 Python 即時最佳化 ----
+
+const PYTHON_BIN = process.env.PYTHON_BIN || (process.platform === "win32" ? "python" : "python3");
+const PORTFOLIO_SCRIPT = path.join(ROOT, "portfolio", "Risk_Based_Allocation.py");
+const PORTFOLIO_TIMEOUT_MS = 30_000;
+
+function runPortfolio(score) {
+  return new Promise((resolve, reject) => {
+    // execFile 不經過 shell，score 又是檢查過的數字，不會有指令注入問題
+    execFile(
+      PYTHON_BIN,
+      [PORTFOLIO_SCRIPT, "--score", String(score), "--json"],
+      { timeout: PORTFOLIO_TIMEOUT_MS, cwd: ROOT, env: { ...process.env, PYTHONUTF8: "1" } },
+      (err, stdout, stderr) => {
+        if (err) return reject(new Error(stderr || err.message));
+        try {
+          resolve(JSON.parse(stdout));
+        } catch (e) {
+          reject(new Error("Python 輸出不是合法的 JSON"));
+        }
+      }
+    );
+  });
+}
+
+async function handlePortfolio(req, res) {
+  if (req.method !== "POST") {
+    res.setHeader("Allow", "POST");
+    return sendJson(res, 405, { error: "不支援此方法" });
+  }
+  if (rateLimited(req.socket.remoteAddress)) return sendJson(res, 429, { error: "請求太頻繁，請稍後再試" });
+
+  let body;
+  try {
+    body = JSON.parse(await readBody(req));
+  } catch (e) {
+    const status = e.status || 400;
+    return sendJson(res, status, { error: status === 413 ? "內容過大" : "JSON 格式錯誤" });
+  }
+  const score = body && body.score;
+  if (typeof score !== "number" || !Number.isFinite(score) || score < 0 || score > 100) {
+    return sendJson(res, 400, { error: "score 必須是 0 到 100 的數字" });
+  }
+
+  try {
+    return sendJson(res, 200, await runPortfolio(score));
+  } catch (e) {
+    console.error("投資組合計算失敗：", e.message);
+    return sendJson(res, 502, { error: "投資組合計算失敗" });
+  }
+}
+
 async function handleApi(req, res, pathname) {
+  if (pathname === "/api/portfolio") return handlePortfolio(req, res);
   if (pathname === "/api/analyze") return handleAnalyze(req, res);
   if (pathname !== "/api/submissions") return sendJson(res, 404, { error: "找不到此 API" });
 
