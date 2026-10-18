@@ -141,11 +141,19 @@ RoboAdvisor.scoring = {
       applyCap(capType, `「${q.dimension}」：${q.hardCap.reason}，類型最高為${capType.name}。`);
     });
 
+    // 配置用的有效風險分數：類型被上限調降時，分數也要夾在最終類型的區間內，
+    // 否則類型標示「穩健型」，送去最佳化的卻是「積極型」的分數。
+    // 沒有被調降時，就是基準風險分數本身。
+    const typeCeiling = (type) => Math.round(((type.max - 1) / 4) * 1000) / 10; // 類型區間的分數上緣（保守 33.5、穩健 67）
+    const effectiveScore =
+      finalType === rawType ? baselineScore : Math.min(baselineScore, typeCeiling(finalType));
+
     // 回傳完整計算結果封裝物件
     return {
       breakdown,       // 各題回答與得分明細
       average,         // 整體加權平均分數 (1~5)
-      baselineScore,   // 基準風險分數 (0~100)
+      baselineScore,   // 基準風險分數 (0~100)，不隨上限調整
+      effectiveScore,  // 配置用的有效分數：被調降時夾在最終類型的區間內，否則等於基準分數
       rawType,         // 降級前的原始類型
       type: finalType, // 經過上限檢核後的最終類型
       capacityAverage, // 客觀承受能力構面平均分數

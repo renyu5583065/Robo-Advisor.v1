@@ -226,6 +226,12 @@ button {
   line-height: 1.6;
 }
 
+/* 降級說明最後一行：基準分數與配置實際採用的分數 */
+.cap-notice__score {
+  margin: 10px 0 0;
+  color: var(--muted);
+}
+
 /* 選擇題選項：整列可點的按鈕，含圓點標記與選取狀態（.is-selected） */
 .wizard__options {
   display: flex;
