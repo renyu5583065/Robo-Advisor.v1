@@ -534,7 +534,7 @@ button {
   flex: 0 0 90px;
   height: 6px;
   border-radius: 999px;
-  background: var(--border);
+  background: var(--rose-pale);
   overflow: hidden;
 }
 
