@@ -262,7 +262,8 @@
     });
     noAlertsNote2.classList.toggle("hidden", results.alerts.length > 0);
 
-    RoboAdvisor.renderRadarChart("radarCanvas2", results.breakdown, results.dominant.color, "行為與情緒指標");
+    const typeColor = getComputedStyle(resultsEl).getPropertyValue("--type-color").trim() || results.dominant.color;
+    RoboAdvisor.renderRadarChart("radarCanvas2", results.breakdown, typeColor, "行為與情緒指標");
   }
 
   function saveResults(responses, results) {
