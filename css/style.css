@@ -1,3 +1,18 @@
+/*
+ * style.css
+ * 問卷頁面的全部樣式，由上而下依頁面順序排列：
+ *   1. 設計變數與全域設定（色彩、圓角、字型、重置）
+ *   2. Hero：頁首標題區
+ *   3. Page / cards：主要內容容器與卡片
+ *   4. Wizard：作答流程（進度列、題目、選項、文字輸入、按鈕）
+ *   5. Results：結果頁（投資人類型、分數、雷達圖、逐題明細、行為提醒）
+ *   6. Footer：頁尾
+ *   7. Responsive：手機版（寬度 560px 以下）調整
+ *   8. 建議投資組合：配置統計、圓餅圖、持股清單與載入狀態
+ */
+
+/* ---------- 設計變數與全域設定 ---------- */
+/* 色彩（玫瑰紅為主、青綠為輔）、三種圓角大小、標題與內文字型 */
 :root {
   --rose-deep: #91203e;
   --rose: #ef8197;
@@ -19,10 +34,12 @@
   --font-body: "Noto Sans TC", "Manrope", sans-serif;
 }
 
+/* 全域重置：元素寬度含 padding 與邊框 */
 * {
   box-sizing: border-box;
 }
 
+/* 頁面底色、預設文字色與字型 */
 html,
 body {
   margin: 0;
@@ -38,12 +55,14 @@ button {
   font-family: inherit;
 }
 
+/* 鍵盤操作時的焦點外框（無障礙） */
 :focus-visible {
   outline: 3px solid var(--teal);
   outline-offset: 2px;
 }
 
 /* ---------- Hero ---------- */
+/* 頁首：深玫瑰色底，上方漸層色條，下方依序是階段標籤、標題、副標題與說明文字 */
 
 .hero {
   background: var(--rose-deep);
@@ -96,6 +115,7 @@ button {
 }
 
 /* ---------- Page / cards ---------- */
+/* .page 是置中的內容容器（向上蓋住 hero 一小段）；.card 是白色圓角卡片；.hidden 用來切換顯示階段 */
 
 .page {
   max-width: 720px;
@@ -117,7 +137,9 @@ button {
 }
 
 /* ---------- Wizard ---------- */
+/* 作答流程：進度列 → 題目文字 → 選項或輸入框 → 上一題／下一題按鈕 */
 
+/* 進度列：軌道、填色條與「第 n 題」文字 */
 .wizard__progress {
   display: flex;
   align-items: center;
@@ -147,6 +169,7 @@ button {
   white-space: nowrap;
 }
 
+/* 卡片頂端的階段標籤，以及題目區（構面名稱、題目、備註） */
 .card__stage {
   font-family: var(--font-display);
   font-weight: 700;
@@ -181,6 +204,7 @@ button {
   line-height: 1.6;
 }
 
+/* 上限規則提示框：選到會限制投資人類型的選項時顯示 */
 .cap-notice {
   margin: 0 0 16px;
   padding: 14px 16px;
@@ -202,6 +226,7 @@ button {
   line-height: 1.6;
 }
 
+/* 選擇題選項：整列可點的按鈕，含圓點標記與選取狀態（.is-selected） */
 .wizard__options {
   display: flex;
   flex-direction: column;
@@ -256,6 +281,7 @@ button {
   border-radius: 50%;
 }
 
+/* 文字輸入：開放式問題的多行輸入框、暱稱輸入框與錯誤訊息 */
 .wizard__textarea {
   width: 100%;
   padding: 14px 16px;
@@ -295,6 +321,7 @@ button {
   margin: 0 0 16px;
 }
 
+/* 範例回答：點擊後可帶入輸入框的虛線小按鈕 */
 .wizard__examples {
   margin: -14px 0 28px;
 }
@@ -330,6 +357,7 @@ button {
   color: var(--text);
 }
 
+/* 導覽列與按鈕：primary 為主要動作、ghost 為上一題、secondary 為次要動作 */
 .wizard__nav {
   display: flex;
   justify-content: space-between;
@@ -373,6 +401,7 @@ button {
 }
 
 /* ---------- Results ---------- */
+/* 結果頁：區塊標題與分隔線 → 類型徽章與分數 → 雷達圖 → 逐題明細 → 行為提醒 → 操作按鈕 */
 
 .results__block {
   margin-bottom: 8px;
@@ -392,6 +421,7 @@ button {
   margin: 8px 0 30px;
 }
 
+/* 結果標頭：投資人類型徽章（左）與基準風險分數（右）、類型說明文字 */
 .results__header {
   display: flex;
   align-items: center;
@@ -450,6 +480,7 @@ button {
   margin: 0 0 24px;
 }
 
+/* 雷達圖容器，以及圖表載入失敗時的替代文字 */
 .results__chart {
   max-width: 420px;
   margin: 0 auto 28px;
@@ -466,6 +497,7 @@ button {
   text-align: center;
 }
 
+/* 逐題明細與行為指標列表：構面名稱、作答內容、分數條與分數（--indicator 為第二階段，另有依據原句） */
 .results__breakdown h3 {
   font-family: var(--font-display);
   font-size: 1rem;
@@ -538,6 +570,7 @@ button {
   flex: 0 0 120px;
 }
 
+/* 行為提醒卡片 */
 .alert-list {
   list-style: none;
   margin: 0 0 12px;
@@ -564,6 +597,7 @@ button {
   margin-bottom: 4px;
 }
 
+/* 結果頁底部的操作按鈕（如下載 JSON）與備註 */
 .results__actions {
   display: flex;
   gap: 12px;
@@ -584,6 +618,7 @@ button {
 }
 
 /* ---------- Footer ---------- */
+/* 頁尾：置中的小字說明 */
 
 .footer {
   text-align: center;
@@ -593,6 +628,7 @@ button {
 }
 
 /* ---------- Responsive ---------- */
+/* 手機版：縮小卡片與標題區邊距，結果標頭與逐題明細改為直向排列 */
 
 @media (max-width: 560px) {
   .card {
@@ -622,6 +658,9 @@ button {
 }
 
 /* ---------- 建議投資組合 ---------- */
+/* 依風險類型建議的資產配置：三格統計數字 → 圓餅圖 → 持股清單（名稱、類別、權重、比例條） */
+
+/* 統計數字：三欄並排（手機版改單欄，見下方媒體查詢） */
 .portfolio-stats {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -651,10 +690,12 @@ button {
   margin: 4px 0 0;
 }
 
+/* 較小的圓餅圖 */
 .results__chart--small {
   max-width: 280px;
 }
 
+/* 持股清單：每檔一列，名稱與色點在左、類別與權重在右，下方為比例條 */
 .holding-list {
   list-style: none;
   margin: 0 0 20px;
@@ -712,11 +753,14 @@ button {
   border-radius: 3px;
 }
 
+/* 手機版：統計數字改為單欄 */
 @media (max-width: 480px) {
   .portfolio-stats {
     grid-template-columns: 1fr;
   }
 }
+
+/* 配置載入狀態訊息（--error 為載入失敗） */
 .portfolio-status {
   margin: 0 0 20px;
   padding: 14px 16px;
