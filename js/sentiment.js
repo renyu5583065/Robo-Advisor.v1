@@ -22,7 +22,7 @@ RoboAdvisor.sentiment = {
     {
       key: "anxiety",
       name: "焦慮",
-      color: "#c94f4f",
+      color: "#d4556f",
       raise: [
         "焦慮", "緊張", "擔心", "害怕", "恐慌", "睡不著", "壓力大", "不安", "很怕",
         "worried", "anxious", "nervous", "scared", "panic", "stressed", "afraid",
@@ -36,7 +36,7 @@ RoboAdvisor.sentiment = {
     {
       key: "lossAversion",
       name: "損失規避",
-      color: "#5b6fc9",
+      color: "#f29a76",
       raise: [
         "賣掉", "全部賣", "停損", "立刻賣", "不能接受虧損", "受不了", "趕快出場", "認賠",
         "sell everything", "sell all", "sell it all", "cut my losses", "cut losses",
@@ -51,7 +51,7 @@ RoboAdvisor.sentiment = {
     {
       key: "confidence",
       name: "自信程度",
-      color: "#14b8a6",
+      color: "#3db7c4",
       raise: [
         "有信心", "相信自己的判斷", "做過研究", "了解市場", "按計畫執行", "很確定", "很有把握",
         "confident", "trust my plan", "done my research", "i know what i'm doing",
@@ -65,7 +65,7 @@ RoboAdvisor.sentiment = {
     {
       key: "herding",
       name: "從眾傾向",
-      color: "#c97c13",
+      color: "#b565a7",
       raise: [
         "跟著大家", "跟風", "別人都在", "朋友說", "大家都買", "跟進", "也跟著買",
         "follow the crowd", "everyone else is", "my friend", "jump in too",
@@ -80,7 +80,7 @@ RoboAdvisor.sentiment = {
     {
       key: "overconfidence",
       name: "過度自信",
-      color: "#8a4fc9",
+      color: "#8e7cc3",
       raise: [
         "一定會賺", "穩賺", "比別人厲害", "不需要多想", "我看得很準", "絕對沒問題", "全押",
         "guaranteed", "sure thing", "definitely will", "better than others",
@@ -94,7 +94,7 @@ RoboAdvisor.sentiment = {
     {
       key: "confirmationBias",
       name: "確認偏誤",
-      color: "#d1578a",
+      color: "#1f8e9b",
       raise: [
         "不會理會", "不值一提", "只相信自己", "博眼球", "亂猜", "找支持", "支持我看多", "證明自己是對的", "證明自己的看法", "只看看多", "不想聽",
         "ignore the bears", "only trust my own", "agree with me", "prove i'm right", "clickbait",
@@ -109,7 +109,7 @@ RoboAdvisor.sentiment = {
     {
       key: "dispositionEffect",
       name: "處置效應",
-      color: "#5a8f3d",
+      color: "#ef8197",
       raise: [
         "沒賣就不算賠", "抱到回本", "等回本", "捨不得賣", "不甘心", "不想面對", "解套", "擺著不管",
         "not a loss until i sell", "wait until i break even", "hold until it recovers",
