@@ -3,7 +3,7 @@
  * 
  * 【功能說明】
  * 建議投資組合視圖模組：
- * 依據使用者的「第一階段基準風險分數」，呼叫最佳化演算法（MPT 現代投資組合理論）
+ * 依據使用者的「第一階段基準風險分數」，呼叫後端的 Python 最佳化程式（MPT 現代投資組合理論）
  * 計算出客製化的資產配置比例，並將結果繪製於畫面（圓餅圖與持股清單）。
  * 同時將計算結果存入 localStorage，便於使用者匯出下載完整評估報告。
  */
@@ -57,8 +57,8 @@ RoboAdvisor.portfolioView = (function () {
     profile.portfolio = {
       baselineScore: score,
       holdings: result.holdings.map((h) => ({ code: h.code, name: h.name, weight: Number(h.weight.toFixed(4)) })),
-      expectedReturn: result.ret,
-      volatility: result.risk,
+      expectedReturn: result.expectedReturn,
+      volatility: result.volatility,
       sharpe: result.sharpe,
       computedAt: new Date().toISOString(), // 記錄計算完成的時間戳記
     };
@@ -125,33 +125,69 @@ RoboAdvisor.portfolioView = (function () {
     }
   }
 
-  // 4. 畫面渲染主函式 (Main Render)
+  // 4. 向後端取得最適配置 (Call Python via API)
+  // 暫存最近一次的計算結果，使用者來回切換頁面時不必重複呼叫 Python
+  let cache = { score: null, result: null };
+
   /**
-   * 執行資產配置最佳化運算並將所有數值、清單與圖表渲染至頁面
+   * 把風險分數送到後端 /api/portfolio，由 Python（scipy 最佳化）即時算出權重
+   * @param {number} score - 基準風險分數（0–100）
    */
-  function render() {
+  async function fetchPortfolio(score) {
+    if (cache.score === score && cache.result) return cache.result;
+    const res = await fetch("/api/portfolio", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ score }),
+    });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const result = await res.json();
+    cache = { score, result };
+    return result;
+  }
+
+  /** 顯示「計算中」或錯誤訊息；message 為空字串時隱藏狀態列，顯示結果內容。 */
+  function setStatus(message, isError) {
+    const status = document.getElementById("portfolioStatus");
+    const content = document.getElementById("portfolioContent");
+    status.textContent = message;
+    status.classList.toggle("hidden", !message);
+    status.classList.toggle("portfolio-status--error", Boolean(isError));
+    content.classList.toggle("hidden", Boolean(message));
+  }
+
+  // 5. 畫面渲染主函式 (Main Render)
+  /**
+   * 取得 Python 最佳化結果，並將所有數值、清單與圖表渲染至頁面
+   */
+  async function render() {
     const section = document.getElementById("portfolioBlock");
     if (!section) return;
 
-    const data = RoboAdvisor.portfolioData; // 歷史資產報酬與協方差矩陣等預先計算資料
-    const score = readBaselineScore();       // 取得使用者評估分數
-
-    // 檢查必要模組與資料是否就緒，若資料不齊全則隱藏此區塊並中斷
-    if (!data || !RoboAdvisor.portfolio || score === null || Number.isNaN(score)) {
-      section.classList.add("hidden");
+    const score = readBaselineScore(); // 取得使用者評估分數
+    if (score === null || Number.isNaN(score)) {
+      setStatus("找不到風險分數，請先完成問卷。", true);
       return;
     }
 
-    // 呼叫投資組合最佳化演算法，計算出推薦持股比例與關鍵績效指標
-    const result = RoboAdvisor.portfolio.optimize(score, data);
-    section.classList.remove("hidden");
+    setStatus("正在由 Python 依你的風險分數計算最適投資組合…", false);
+
+    let result;
+    try {
+      result = await fetchPortfolio(score);
+    } catch (e) {
+      console.error("取得建議投資組合失敗", e);
+      setStatus("暫時無法計算建議投資組合，請稍後再試。", true);
+      return;
+    }
+    setStatus("", false);
 
     // 填入關鍵指標數據到 HTML 元素中
-    document.getElementById("portfolioScore").textContent = score;                    // 基準風險分數
-    document.getElementById("portfolioReturn").textContent = pct(result.ret);         // 預期年化報酬率
-    document.getElementById("portfolioRisk").textContent = pct(result.risk);           // 年化波動度（風險）
-    document.getElementById("portfolioSharpe").textContent = result.sharpe.toFixed(2); // 夏普值 (Sharpe Ratio)
-    document.getElementById("portfolioPeriod").textContent = `${data.period[0]} ~ ${data.period[1]}`; // 回測計算歷史區間
+    document.getElementById("portfolioScore").textContent = score;                              // 基準風險分數
+    document.getElementById("portfolioReturn").textContent = pct(result.expectedReturn);        // 預期年化報酬率
+    document.getElementById("portfolioRisk").textContent = pct(result.volatility);              // 年化波動度（風險）
+    document.getElementById("portfolioSharpe").textContent = result.sharpe.toFixed(2);          // 夏普值 (Sharpe Ratio)
+    document.getElementById("portfolioPeriod").textContent = `${result.period[0]} ~ ${result.period[1]}`; // 歷史資料區間
 
     // 繪製資產配置清單列表
     const list = document.getElementById("portfolioList");
@@ -165,7 +201,7 @@ RoboAdvisor.portfolioView = (function () {
         <span class="holding__name"><span class="holding__dot" style="background:${color}"></span></span>
         <span class="holding__class"></span>
         <span class="holding__weight">${pct(h.weight)}</span>
-        <span class="holding__bar-track"><span class="holding__bar-fill" style="width:${(h.weight / data.maxWeight) * 100}%; background:${color}"></span></span>
+        <span class="holding__bar-track"><span class="holding__bar-fill" style="width:${(h.weight / result.maxWeight) * 100}%; background:${color}"></span></span>
       `;
       // 安全性考量：使用 append 與 textContent 填入文字，避免資料中若含有特殊字元時被誤認為 HTML 造成 XSS 風險
       li.querySelector(".holding__name").append(`${h.name}（${h.code}）`);
@@ -179,7 +215,7 @@ RoboAdvisor.portfolioView = (function () {
     save(score, result);
   }
 
-  // 5. 頁面切換控制 (Page View Switching)
+  // 6. 頁面切換控制 (Page View Switching)
   /**
    * 在「評估結果頁」與「建議投資組合頁」之間切換
    * 兩頁皆為卡片設計 (card)，切換時透過 toggle 控制 "hidden" class
@@ -199,12 +235,12 @@ RoboAdvisor.portfolioView = (function () {
     (pageId === "portfolio" ? page : results).scrollIntoView({ behavior: "smooth", block: "start" });
   }
 
-  // 6. 事件監聽 (Event Listeners)
+  // 7. 事件監聽 (Event Listeners)
   // 點擊「查看建議投資組合」按鈕時切換到投資組合頁面
   document.getElementById("toPortfolioBtn").addEventListener("click", () => show("portfolio"));
   // 點擊「返回評估結果」按鈕時切換回結果頁面
   document.getElementById("backToResultsBtn").addEventListener("click", () => show("results"));
 
-  // 7. 匯出公開介面 (Public API)
+  // 8. 匯出公開介面 (Public API)
   return { render };
 })();

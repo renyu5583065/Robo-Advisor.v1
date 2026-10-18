@@ -717,3 +717,16 @@ button {
     grid-template-columns: 1fr;
   }
 }
+.portfolio-status {
+  margin: 0 0 20px;
+  padding: 14px 16px;
+  border-radius: var(--radius-md);
+  background: var(--rose-pale);
+  color: var(--muted);
+  text-align: center;
+}
+
+.portfolio-status--error {
+  background: #fff3f5;
+  color: #b42318;
+}
