@@ -65,7 +65,7 @@ function append(record) {
     await fs.promises.writeFile(tmp, JSON.stringify(all, null, 2));
     await fs.promises.rename(tmp, DATA_FILE);
   });
-  writeQueue = task.catch(() => {});
+  writeQueue = task.catch(() => { });
   return task;
 }
 

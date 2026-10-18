@@ -117,6 +117,8 @@
     const results = latestResults;
     if (!results) return;
 
+    // 第二部分的進度條沿用同一個顏色（見 app-phase2.js）
+    resultsEl.style.setProperty("--type-color", results.type.color);
     typeName.textContent = results.type.name;
     scoreNumber.textContent = results.baselineScore;
     typeDescription.textContent = results.type.desc;
@@ -145,6 +147,7 @@
         <span class="breakdown-item__bar-track">
           <span class="breakdown-item__bar-fill" style="width:${(item.score / 5) * 100}%; background:${results.type.color}"></span>
         </span>
+         <span class="breakdown-item__score">${item.score} / 5</span>
       `;
       breakdownList.appendChild(li);
     });

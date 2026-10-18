@@ -237,17 +237,19 @@
       li.innerHTML = `
         <span class="breakdown-item__label">${item.dimension}</span>
         <span class="breakdown-item__bar-track">
-          <span class="breakdown-item__bar-fill" style="width:${(item.score / 5) * 100}%; background:${item.color}"></span>
+          <span class="breakdown-item__bar-fill" style="width:${(item.score / 5) * 100}%; background:var(--type-color)"></span>
         </span>
         <span class="breakdown-item__score">${item.score} / 5</span>
       `;
-      if (item.evidence) {
-        const note = document.createElement("span");
-        note.className = "breakdown-item__evidence";
-        // evidence 來自使用者回答與 LLM，一律用 textContent 避免注入 HTML
-        note.textContent = `依據：「${item.evidence}」（信心度：${confidenceLabels[item.confidence] || "低"}）`;
-        li.appendChild(note);
-      }
+
+      const note = document.createElement("span");
+      note.className = "breakdown-item__evidence";
+      // evidence 來自使用者回答與 LLM，一律用 textContent 避免注入 HTML
+      note.textContent = item.evidence
+        ? `依據：「${item.evidence}」（信心度：${confidenceLabels[item.confidence] || "低"}）`
+        : `依據：回答中沒有足夠線索（信心度：${confidenceLabels[item.confidence] || "低"}）`;
+      li.appendChild(note);
+
       breakdownList2.appendChild(li);
     });
 
