@@ -251,7 +251,7 @@ button {
 }
 
 .option:hover {
-  border-color: var(--teal);
+  border-color: var(--rose-deep);
 }
 
 .option__dot {
