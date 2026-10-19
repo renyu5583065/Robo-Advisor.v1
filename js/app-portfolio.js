@@ -28,14 +28,17 @@ RoboAdvisor.portfolioView = (function () {
   const pct = (x, digits = 1) => `${(x * 100).toFixed(digits)}%`;
 
   /**
-   * 從本機 localStorage 中讀取第一階段測出的「基準風險分數」
+   * 從本機 localStorage 中讀取第一階段的「有效風險分數」（類型被上限調降時已夾在該類型區間內）
+   * 舊版資料沒有 effectiveScore 時，退回基準風險分數
    * @returns {number|null} 風險分數（若讀取失敗或無資料則回傳 null）
    */
-  function readBaselineScore() {
+  function readEffectiveScore() {
     try {
       const profile = JSON.parse(localStorage.getItem(STORAGE_KEY)) || {};
       // 確認是否有第一階段資料，若有則將分數轉為數值型態回傳
-      return profile.phase1 ? Number(profile.phase1.baselineScore) : null;
+      if (!profile.phase1) return null;
+      const p = profile.phase1;
+      return Number(p.effectiveScore ?? p.baselineScore);
     } catch (e) {
       return null;
     }
@@ -43,7 +46,7 @@ RoboAdvisor.portfolioView = (function () {
 
   /**
    * 將計算出的投資組合結果儲存到 localStorage
-   * @param {number} score - 基準風險分數
+   * @param {number} score - 配置採用的有效風險分數
    * @param {Object} result - 最佳化演算法計算出的投資組合成果物件
    */
   function save(score, result) {
@@ -55,7 +58,7 @@ RoboAdvisor.portfolioView = (function () {
     }
     // 將建議投資組合資訊寫入 profile.portfolio 欄位中
     profile.portfolio = {
-      baselineScore: score,
+      effectiveScore: score,
       holdings: result.holdings.map((h) => ({ code: h.code, name: h.name, weight: Number(h.weight.toFixed(4)) })),
       expectedReturn: result.expectedReturn,
       volatility: result.volatility,
@@ -164,7 +167,7 @@ RoboAdvisor.portfolioView = (function () {
     const section = document.getElementById("portfolioBlock");
     if (!section) return;
 
-    const score = readBaselineScore(); // 取得使用者評估分數
+    const score = readEffectiveScore(); // 取得配置採用的風險分數
     if (score === null || Number.isNaN(score)) {
       setStatus("找不到風險分數，請先完成問卷。", true);
       return;
@@ -183,7 +186,7 @@ RoboAdvisor.portfolioView = (function () {
     setStatus("", false);
 
     // 填入關鍵指標數據到 HTML 元素中
-    document.getElementById("portfolioScore").textContent = score;                              // 基準風險分數
+    document.getElementById("portfolioScore").textContent = score;                              // 配置採用的風險分數
     document.getElementById("portfolioReturn").textContent = pct(result.expectedReturn);        // 預期年化報酬率
     document.getElementById("portfolioRisk").textContent = pct(result.volatility);              // 年化波動度（風險）
     document.getElementById("portfolioSharpe").textContent = result.sharpe.toFixed(2);          // 夏普值 (Sharpe Ratio)

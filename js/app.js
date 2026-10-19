@@ -46,6 +46,8 @@
   const capBefore = document.getElementById("capBefore");             // 降級前的原始投資人類型
   const capAfter = document.getElementById("capAfter");               // 降級後的最終投資人類型
   const capReasons = document.getElementById("capReasons");           // 觸發降級原因清單 (<ul>)
+  const capBaseline = document.getElementById("capBaseline");         // 降級說明中的基準風險分數
+  const capEffective = document.getElementById("capEffective");       // 降級說明中，配置實際採用的有效分數
   const breakdownList = document.getElementById("breakdownList");     // 各構面得分與答題清單 (<ul>)
   const retakeBtn = document.getElementById("retakeBtn");             // 「重新測驗」按鈕
   const downloadBtn = document.getElementById("downloadBtn");         // 「下載評估報告 (JSON)」按鈕
@@ -169,6 +171,8 @@
     if (adjusted) {
       capBefore.textContent = results.rawType.name;
       capAfter.textContent = results.type.name;
+      capBaseline.textContent = results.baselineScore;
+      capEffective.textContent = results.effectiveScore;
       results.capReasons.forEach((text) => {
         const li = document.createElement("li");
         li.textContent = text;
@@ -212,6 +216,7 @@
       answers,
       average: results.average,
       baselineScore: results.baselineScore,
+      effectiveScore: results.effectiveScore,
       investorType: results.type.key,
       rawInvestorType: results.rawType.key,
       capacityAverage: results.capacityAverage,
