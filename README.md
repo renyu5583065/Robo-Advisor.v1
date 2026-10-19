@@ -24,6 +24,36 @@ npm start                 # 結果頁會標示用的是 LLM 還是關鍵字分�
 
 `.env` 可另設 `LLM_BASE_URL`（預設 `https://air.cgu.edu.tw/cgullmapi/v1`）、`LLM_MODEL`（預設 `gpt-6-luna`）。金鑰只存在後端，`.env` 不會被提交。
 
+伺服器預設只監聽 `127.0.0.1:3000`；設定了 `PORT` 或在 Railway 上執行時改聽 `0.0.0.0`（也可用 `HOST` 覆寫）。
+
+## 資料流程
+
+![資料流程](data_flow.png)
+
+左側主流程：暱稱 → 10 題選擇題 → 風險上限檢核 → 有效風險分數 → Python 最佳化 → 建議投資組合。
+右側行為分析支線：6 題開放式問答 → LLM（或關鍵字備援）→ 行為指標與偏誤警示；目前只顯示與記錄，不影響配置。
+
+## 專案結構
+
+```text
+index.html, css/        單頁問卷介面與樣式
+js/                     前端邏輯：questions*.js 題目、scoring.js 風險計分、sentiment.js 行為分析、
+                        app*.js 流程控制、chart.js／vendor/chartjs 圖表
+server/server.js        靜態檔案 + API（零相依套件）
+server/llm.js           CGU LLM 呼叫（輸出 JSON、格式錯誤重試）
+portfolio/              價格 CSV 與 Python 分析腳本、輸出的表格與圖
+Dockerfile              Node + Python 合併映像，供 Railway 部署
+```
+
+### API
+
+| 路由 | 說明 |
+| --- | --- |
+| `POST /api/portfolio` | 傳入風險分數，伺服器呼叫 Python 最佳化後回傳權重（逾時 30 秒） |
+| `POST /api/analyze` | 第二階段 LLM 分析；未設 `LLM_API_KEY` 回 503，前端改用關鍵字分析 |
+| `POST /api/submissions` | 記錄一份問卷結果（含暱稱） |
+| `GET /api/submissions` | 列出已記錄的結果（僅供本機查看） |
+
 ## Minimal Example
 
 ### 換股後重跑 MPT 分析
@@ -71,6 +101,15 @@ Node 伺服器呼叫 `python portfolio/Risk_Based_Allocation.py --score <分數>
 | `portfolio/allocation_comparison.png` | 三類型配置比較 |
 | `Efficient_Frontier.png`、`MVP_Weights.png` | 機會集合、MVP（無權重上限） |
 | `data/submissions.json` | 問卷結果（`POST/GET /api/submissions`，僅本機、不提交） |
+
+## 部署（Railway / Docker）
+
+```bash
+docker build -t robo-advisor .
+docker run -p 3000:3000 -e PORT=3000 -e LLM_API_KEY=你的金鑰 robo-advisor
+```
+
+映像以 `node:22-slim` 為底，另建 Python venv 安裝 `requirements.txt`，並以 `PYTHON_BIN` 指向它；`LLM_API_KEY` 請設為平台環境變數。
 
 ## 備註
 
