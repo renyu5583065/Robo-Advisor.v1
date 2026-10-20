@@ -15,11 +15,13 @@ MPT_Opportunity_Set_MVP.py
 import numpy as np               # 支援矩陣運算與高維度數值計算
 import pandas as pd              # 支援表格資料處理與時間序列運算
 import matplotlib.pyplot as plt  # 支援繪圖與圖表視覺化
+import os
 import scipy.optimize as solver  # 支援數學規劃與數值最佳化求解器
 
 # 1. 讀取價格資料並計算年化統計量
 # 讀取 CSV 檔案，將第 0 欄設為時間索引 (index_col=0)，並解析為日期時間格式 (parse_dates=True)
-df = pd.read_csv('portfolio/clean_prices.csv', index_col=0, parse_dates=True)
+HERE = os.path.dirname(os.path.abspath(__file__))  # 腳本所在資料夾
+df = pd.read_csv(os.path.join(HERE, 'clean_prices.csv'), index_col=0, parse_dates=True)
 
 # 計算總資產檔數（欄位數量）
 total_stocks = len(df.columns)
@@ -183,7 +185,7 @@ ax.set_xlabel('Risk (Annualized Volatility)')
 ax.set_ylabel('Return (Annualized)')
 ax.legend()
 fig.colorbar(sc, ax=ax, label='Sharpe Ratio')
-plt.savefig('Efficient_Frontier.png', dpi=300) # 儲存高解析度圖檔 (300 DPI)
+plt.savefig(os.path.join(HERE, 'Efficient_Frontier.png'), dpi=300) # 儲存高解析度圖檔 (300 DPI)
 
 # 繪製 MVP 權重長條圖
 fig2 = plt.figure(figsize=(8, 5))
@@ -194,6 +196,6 @@ for i, w in enumerate(mvp_weights):
     ax2.text(i, w * 100 + 0.5, f'{w:.1%}', ha='center')
 ax2.set_title('MVP Weights', fontsize=16, fontweight='bold')
 ax2.set_ylabel('Weight (%)')
-plt.savefig('MVP_Weights.png', dpi=300)
+plt.savefig(os.path.join(HERE, 'MVP_Weights.png'), dpi=300)
 
 plt.show() # 顯示圖表視窗

@@ -4,10 +4,11 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 
-DATA_FOLDER = "."       # 存放 CSV 的資料夾路徑，"." 代表當前目錄
+HERE = os.path.dirname(os.path.abspath(__file__))  # 腳本所在資料夾，不受執行位置影響
+DATA_FOLDER = HERE      # 存放 CSV 的資料夾路徑
 TRADING_DAYS = 252      # 年化交易日數
 MAX_FFILL_DAYS = 5      # 缺漏值最多向前填補天數
-OUTPUT_DIR = "."        # 輸出 CSV 與圖片的目錄
+OUTPUT_DIR = HERE       # 輸出 CSV 與圖片的目錄
 
 EXPORT_TO_CSV = True   # 是否輸出各項分析 CSV 檔 (True / False)
 EXPORT_PLOTS = True    # 是否輸出圖表 PNG 檔 (True / False)
