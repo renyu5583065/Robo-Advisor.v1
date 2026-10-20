@@ -104,15 +104,6 @@ Node 伺服器呼叫 `python portfolio/Risk_Based_Allocation.py --score <分數>
 | `Efficient_Frontier.png`、`MVP_Weights.png` | 機會集合、MVP（無權重上限） |
 | `data/submissions.json` | 問卷結果（`POST/GET /api/submissions`，僅本機、不提交） |
 
-## 部署（Railway / Docker）
-
-```bash
-docker build -t robo-advisor .
-docker run -p 3000:3000 -e PORT=3000 -e LLM_API_KEY=你的金鑰 robo-advisor
-```
-
-映像以 `node:22-slim` 為底，另建 Python venv 安裝 `requirements.txt`，並以 `PYTHON_BIN` 指向它；`LLM_API_KEY` 請設為平台環境變數。
-
 ## 備註
 
 僅供學校作業繳交使用，非商業用途；問卷題目參考國泰世華銀行「投資屬性分析」。
