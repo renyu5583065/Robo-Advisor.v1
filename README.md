@@ -9,7 +9,7 @@
 - **MPT 資產配置**：依風險分數設定目標風險，在風險上限內以 `scipy` 最佳化求出權重；標的可替換
 - **精簡後端**：只用 Node 內建模組，不需 `npm install`
 
-線上版問卷：<https://robo-advisorv1-renyu.up.railway.app/>
+線上版問卷：<https://robo-advisor-v1.vercel.app/>
 
 ## Quick Start
 
