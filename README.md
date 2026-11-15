@@ -11,6 +11,8 @@
 
 線上版問卷：<https://robo-advisor-v1.vercel.app/>
 
+部署方式：前端靜態檔放在 Vercel，後端（Node + Python，`Dockerfile`）放在 Render；Vercel 透過 `vercel.json` 把 `/api/*` 轉發到 Render，前端程式不需另設 API 網址。LLM 金鑰（`LLM_API_KEY`）只設在 Render 的環境變數。Render 免費方案閒置後會休眠，第一次請求需等待喚醒。
+
 ## Quick Start
 
 需求：Node ≥ 20.12、Python 3（`pip install numpy pandas scipy matplotlib`）
@@ -26,7 +28,7 @@ npm start                 # 結果頁會標示用的是 LLM 還是關鍵字分�
 
 `.env` 可另設 `LLM_BASE_URL`（預設 `https://air.cgu.edu.tw/cgullmapi/v1`）、`LLM_MODEL`（預設 `gpt-6-luna`）。金鑰只存在後端，`.env` 不會被提交。
 
-伺服器預設只監聽 `127.0.0.1:3000`；設定了 `PORT` 或在 Railway 上執行時改聽 `0.0.0.0`（也可用 `HOST` 覆寫）。
+伺服器預設只監聽 `127.0.0.1:3000`；設定了 `PORT` 或在 Render 上執行時改聽 `0.0.0.0`（也可用 `HOST` 覆寫）。
 
 ## 資料流程
 
@@ -44,7 +46,8 @@ js/                     前端邏輯：questions*.js 題目、scoring.js 風險�
 server/server.js        靜態檔案 + API（零相依套件）
 server/llm.js           CGU LLM 呼叫（輸出 JSON、格式錯誤重試）
 portfolio/              價格 CSV 與 Python 分析腳本、輸出的表格與圖
-Dockerfile              Node + Python 合併映像，供 Railway 部署
+Dockerfile              Node + Python 合併映像，供 Render 部署後端
+vercel.json             Vercel 設定：把 /api/* 轉發到 Render 後端
 ```
 
 ### API
