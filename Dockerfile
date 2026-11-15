@@ -1,4 +1,4 @@
-# Node 伺服器 + Python（scipy 最佳化）放在同一個容器裡，供 Railway 部署使用
+# Node 伺服器 + Python（scipy 最佳化）放在同一個容器裡，供 Render 部署使用
 FROM node:22-slim
 
 RUN apt-get update \

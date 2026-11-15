@@ -28,7 +28,7 @@ const llm = require("./llm");
 const DATA_DIR = path.join(ROOT, "data");
 const DATA_FILE = path.join(DATA_DIR, "submissions.json");
 const PORT = Number(process.env.PORT) || 3000;
-// 本機預設只聽 127.0.0.1；雲端平台（如 Railway）的代理要連得進來，必須聽 0.0.0.0
+// 本機預設只聽 127.0.0.1；雲端平台（如 Render）的代理要連得進來，必須聽 0.0.0.0
 const HOST = process.env.HOST || (process.env.RAILWAY_ENVIRONMENT || process.env.PORT ? "0.0.0.0" : "127.0.0.1");
 const MAX_BODY_BYTES = 100 * 1024;
 const NICKNAME_MAX = 20;
